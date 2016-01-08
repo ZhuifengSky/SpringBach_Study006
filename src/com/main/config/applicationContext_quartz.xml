@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans>
+
+	<bean id="scheduler"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean"
+		lazy-init="false">
+		<property name="startupDelay" value="10" />
+		<property name="triggers">
+			<list>
+			<!-- 定时问好 -->
+			 <ref local="sayHelloTirgger" />
+			</list>
+		</property>
+	</bean> 
+	 
+	 <!-- 定时问好 --> 
+	<!-- <bean name="sayHelloJob" class="org.springframework.scheduling.quartz.JobDetailBean" 
+			lazy-init="default" autowire="default" dependency-check="default">
+	  <property name="jobClass" value="com.main.scheduler.job.TimeSayHelloJob" /> 
+	  <property name="jobDataAsMap">
+		  <map><entry key="size" value="10" /> </map>
+	  </property>
+	  <property name="applicationContextJobDataKey" value="applicationContext" /> 
+    </bean>
+	<bean id="sayHelloTirgger" class="org.springframework.scheduling.quartz.CronTriggerBean" 
+			lazy-init="default" autowire="default" dependency-check="default">
+	  <property name="jobDetail" ref="sayHelloJob" /> 
+	  <property name="cronExpression" value="0 06 19 * * ?" />    
+	</bean> -->
+	 
+	<bean id="jobClass" class="com.main.scheduler.job.TimeSayHelloJob" />  
+    <bean id="jobDetail"  
+        class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">  
+        <property name="targetObject" ref="jobClass" />  
+        <property name="targetMethod" value="execute" /> 
+        <property name="concurrent" value="false" />  
+    </bean>  
+     <bean id="sayHelloTirgger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">  
+         <!--指定触发器关联的作业-->  
+		  <property name="jobDetail">  
+		      <ref bean="jobDetail"/>  
+		  </property>  
+		  <!--延迟10s-->  
+		  <property name="startDelay">  
+		      <value>5000</value>  
+		  </property>  
+		  <!--每60s启动一次-->  
+		  <property name="repeatInterval">  
+		      <value>60000</value>  
+		 </property>  
+		<!--重复一次-->  
+		 <property name="repeatCount">  
+		      <value>1</value>  
+		 </property>    
+    </bean>		
+</beans>
