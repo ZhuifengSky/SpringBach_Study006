@@ -1,57 +1,108 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
-<beans>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:batch="http://www.springframework.org/schema/batch" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/batch
+		http://www.springframework.org/schema/batch/spring-batch.xsd
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+	">
 
-	<bean id="scheduler"
-		class="org.springframework.scheduling.quartz.SchedulerFactoryBean"
-		lazy-init="false">
-		<property name="startupDelay" value="10" />
-		<property name="triggers">
-			<list>
-			<!-- 定时问好 -->
-			 <ref local="sayHelloTirgger" />
-			</list>
+	<!-- <import resource="applicationContext.xml" /> -->
+
+	<bean id="user" class="com.main.user.model.User" scope="prototype" />
+	<bean id="userProcessor" class="com.main.testBatch.UserProcessor" />
+	<bean id="userMapper" class="com.main.testBatch.UserMapper" />
+	<!-- <bean id="userWriter" class="com.main.testBatch.UserWriter" /> -->
+
+
+	<batch:job id="callPay">
+		<batch:step id="SynsUser">
+			<batch:tasklet>
+				<batch:chunk reader="userReader" writer="userWriter"
+					processor="userProcessor" commit-interval="5">
+				</batch:chunk>
+			</batch:tasklet>
+		</batch:step>
+	</batch:job> 
+	<!-- READER -->
+	<bean id="userReader"
+		class="org.springframework.batch.item.database.JdbcCursorItemReader" scope="step">
+		<!-- <property name="dataSource" ref="dataSourceServer" /> -->
+		<property name="dataSource" ref="dataSource" />
+		<!-- Sql语句 -->
+		<!-- <property name="sql" value="SELECT user_type,ACCOUNT_NO FROM T_STUDENT" /> -->
+		<property name="sql" value="SELECT STUDENTNAME,AGE FROM T_STUDENT" />
+		<!-- 需要一个映射类 -->
+		<property name="rowMapper" ref="userMapper" />
+		
+	</bean>
+	
+	<!-- Writer -->
+	<bean id="userWriter"
+		class="org.springframework.batch.item.database.JdbcBatchItemWriter">
+		<property name="dataSource" ref="dataSource" />
+		<property name="sql"
+			value="insert into t_user (user_name, sex) values(:userName,:sex)" />
+		<property name="itemSqlParameterSourceProvider">
+			<bean class="org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider" />
 		</property>
-	</bean> 
-	 
-	 <!-- 定时问好 --> 
-	<!-- <bean name="sayHelloJob" class="org.springframework.scheduling.quartz.JobDetailBean" 
-			lazy-init="default" autowire="default" dependency-check="default">
-	  <property name="jobClass" value="com.main.scheduler.job.TimeSayHelloJob" /> 
-	  <property name="jobDataAsMap">
-		  <map><entry key="size" value="10" /> </map>
-	  </property>
-	  <property name="applicationContextJobDataKey" value="applicationContext" /> 
-    </bean>
-	<bean id="sayHelloTirgger" class="org.springframework.scheduling.quartz.CronTriggerBean" 
-			lazy-init="default" autowire="default" dependency-check="default">
-	  <property name="jobDetail" ref="sayHelloJob" /> 
-	  <property name="cronExpression" value="0 06 19 * * ?" />    
+	</bean>
+	<!-- <bean id="messageReader" class="org.springframework.batch.item.file.FlatFileItemReader">
+
+		Read a txt file
+		<property name="resource" value="classpath:com/main/config/users.txt" />
+		<property name="lineMapper">
+			<bean class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
+				定义用什么分隔
+				split it
+				<property name="lineTokenizer">
+					默认按照逗号分隔
+					<bean
+						class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
+						<property name="names" value="date,impressions,clicks,earning" 
+							/>
+						特殊的可以自己定义 下面是按照分好分隔
+						<property name="delimiter" value=";" />
+					</bean>
+				</property>
+
+				<property name="fieldSetMapper">
+					<bean class="com.main.testBatch.UserMapper" />
+
+					return back to reader, rather than a mapped object.
+					<bean class="org.springframework.batch.item.file.mapping.PassThroughFieldSetMapper" />
+
+					map to an object
+					<bean class="org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper"> 
+						<property name="prototypeBeanName" value="report" /> </bean>
+
+				</property>
+			</bean>
+		</property>
 	</bean> -->
-	 
-	<bean id="jobClass" class="com.main.scheduler.job.TimeSayHelloJob" />  
-    <bean id="jobDetail"  
-        class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">  
-        <property name="targetObject" ref="jobClass" />  
-        <property name="targetMethod" value="execute" /> 
-        <property name="concurrent" value="false" />  
-    </bean>  
-     <bean id="sayHelloTirgger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">  
-         <!--指定触发器关联的作业-->  
-		  <property name="jobDetail">  
-		      <ref bean="jobDetail"/>  
-		  </property>  
-		  <!--延迟10s-->  
-		  <property name="startDelay">  
-		      <value>5000</value>  
-		  </property>  
-		  <!--每60s启动一次-->  
-		  <property name="repeatInterval">  
-		      <value>60000</value>  
-		 </property>  
-		<!--重复一次-->  
-		 <property name="repeatCount">  
-		      <value>1</value>  
-		 </property>    
-    </bean>		
+	
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+				<property name="jobDetail" ref="jobDetail" />
+				<property name="cronExpression" value="0/20 * * * * ?" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="jobDetail" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass" value="com.main.scheduler.job.TimeSayHelloJob2" />
+		<property name="group" value="quartz-batch" />
+		<property name="durability" value="true" />
+		<property name="applicationContextJobDataKey" value="applicationContext" />
+		<!-- <property name="jobDataAsMap">
+		  <map>
+			<entry key="jobName" value="callPay" />
+			<entry key="jobLocator" value-ref="jobRegistry" />
+			<entry key="jobLauncher" value-ref="jobLauncher" />
+			<entry key="param1" value="mkyong1" />
+			<entry key="param2" value="mkyong2" />
+		  </map>
+	    </property> --> 
+	</bean>
+
 </beans>

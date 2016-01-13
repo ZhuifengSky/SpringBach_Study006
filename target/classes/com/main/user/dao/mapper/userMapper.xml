@@ -24,9 +24,9 @@
 			</if>
 		</where>
 	</select>
-	<insert id="saveUser" parameterType="user">
+	<insert id="saveUser" >
 	   <if test="user!=null">
-	    	insert into User('USER_NAME','SEX')
+	    	insert into t_user (USER_NAME,SEX)
 	    	values(
 	    		#{userName},
 	    		#{sex}

@@ -17,7 +17,7 @@
 	<batch:job id="callPay">
 		<batch:step id="SynsUser">
 			<batch:tasklet>
-				<batch:chunk reader="userReader" writer="userWriter"
+				<batch:chunk reader="userReader" writer="usersWriter"
 					processor="userProcessor" commit-interval="2">
 				</batch:chunk>
 			</batch:tasklet>
@@ -31,7 +31,22 @@
 	    <property name="sql" value="SELECT user_type,ACCOUNT_NO FROM T_STUDENT" />
 	    <!--需要一个映射类  -->   
 	    <property name="rowMapper" ref="userMapper" />  
-   </bean> 
+   </bean>
+   
+   <!--  Writer -->  
+  <bean id="usersWriter"
+        class="org.springframework.batch.item.database.JdbcBatchItemWriter">
+        <property name="dataSource" ref="dataSource" />
+        <property name="sql"
+            value="insert into T_User('USER_NAME','SEX')
+	    	values(
+	    		:userName,:sex
+	    	)" />
+        <property name="itemSqlParameterSourceProvider">
+            <bean
+class="org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider" />
+        </property>
+    </bean> 
 	<bean id="messageReader" class="org.springframework.batch.item.file.FlatFileItemReader">
 
 		<!-- Read a txt file -->

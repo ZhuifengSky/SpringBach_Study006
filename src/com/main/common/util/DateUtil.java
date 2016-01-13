@@ -9,8 +9,6 @@ import javax.xml.bind.DatatypeConverter;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.springframework.util.Assert;
-
 /**
  * 日期工具类
  * 
@@ -245,5 +243,6 @@ public class DateUtil {
 
 	public static void main(String[] args) {
 		System.out.println(isValidDate("2010-03-31", DATE));
+		String s = "ss";
 	}
 }

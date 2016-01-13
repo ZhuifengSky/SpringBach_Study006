@@ -39,7 +39,7 @@
 			<version>5.1.38</version>
 		</dependency>
 
-        <dependency>
+		 <dependency>
 			    <groupId>com.microsoft.sqlserver</groupId>
 			    <artifactId>sqljdbc4</artifactId>
 			    <version>4.0</version>
@@ -48,56 +48,56 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
-			<version>4.2.4.RELEASE</version>
+			<version>4.0.2.RELEASE</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context-support</artifactId>
-			<version>4.2.4.RELEASE</version>
+			<version>4.0.2.RELEASE</version>
 		</dependency>
 		
 		
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
-			<version>4.2.4.RELEASE</version>
+			<version>4.0.2.RELEASE</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-oxm</artifactId>
-			<version>4.2.4.RELEASE</version>
+			<version>4.0.2.RELEASE</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
-			<version>4.2.4.RELEASE</version>
+			<version>4.0.2.RELEASE</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
-			<version>4.2.4.RELEASE</version>
+			<version>4.0.2.RELEASE</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-beans</artifactId>
-			<version>4.2.4.RELEASE</version>
+			<version>4.0.2.RELEASE</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-aop</artifactId>
-			<version>4.2.4.RELEASE</version>
+			<version>4.0.2.RELEASE</version>
        </dependency>
        
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-expression</artifactId>
-			<version>4.2.4.RELEASE</version>
+			<version>4.0.2.RELEASE</version>
        </dependency>
 		
 		<dependency>

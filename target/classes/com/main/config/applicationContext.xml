@@ -93,13 +93,23 @@
         <property name="databaseType" value="mysql" />
     </bean>
 
-    <bean id="transactionManager"
-        class="org.springframework.batch.support.transaction.ResourcelessTransactionManager" />
+  <bean id="transactionManager"
+		class="org.springframework.batch.support.transaction.ResourcelessTransactionManager" />
 
+       
+	
     <bean id="jobLauncher"
         class="org.springframework.batch.core.launch.support.SimpleJobLauncher">
         <property name="jobRepository" ref="jobRepository" />
     </bean>
+    <!-- Must set this -->
+	<bean
+		class="org.springframework.batch.core.configuration.support.JobRegistryBeanPostProcessor">
+		<property name="jobRegistry" ref="jobRegistry" />
+	</bean>
+
+	<bean id="jobRegistry"
+		class="org.springframework.batch.core.configuration.support.MapJobRegistry" />
      <!-- create job-meta tables automatically -->
     <!-- <jdbc:initialize-database data-source="dataSource">
         <jdbc:script location="org/springframework/batch/core/schema-drop-mysql.sql" />
